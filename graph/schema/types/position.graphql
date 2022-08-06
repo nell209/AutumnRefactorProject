@@ -1,0 +1,4 @@
+type Position {
+  pos: Float
+  columnUid: String
+}

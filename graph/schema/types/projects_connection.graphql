@@ -1,0 +1,5 @@
+type ProjectConnection {
+    totalCount: Int!
+    edges: [ProjectEdge]
+    pageInfo: PageInfo!
+}

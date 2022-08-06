@@ -1,0 +1,27 @@
+type Project {
+  ID: ID
+  name: String
+  description: String
+  deadline: Time
+  updatedAt: Time
+  createdAt: Time
+  createdBy: User
+  deletedAt: Time
+  deletedBy: User @goField(forceResolver: true)
+  sharedToAll: Boolean!
+  tasks: [Task!]! @goField(forceResolver: true)
+  users: [User!]! @goField(forceResolver: true)
+}
+
+input ProjectInput {
+  name: String!
+  deadline: Time
+  description: String
+}
+
+input ProjectSearchOptions {
+  search: String
+  order: String
+  orderBy: String
+  type: String
+}

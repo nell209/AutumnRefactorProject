@@ -1,0 +1,104 @@
+directive @goModel(
+  model: String
+  models: [String!]
+) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+
+directive @goField(
+  forceResolver: Boolean
+  name: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
+directive @goTag(
+  key: String!
+  value: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Mutation {
+  AddPrerequisitesToTask(PrerequisiteUids: [String!]!, TaskUid: String!, Type: String!): Response
+  AddUsersToTask(TaskUid: String!, Users: [String]!): Response!
+  ArchiveProject(ProjectUid: String!): Response!
+  CancelTask(TaskUid: String!): Response!
+#  ClockUserIn(BranchUid: String!, Lat: Float!, Long: Float!): ClockIn
+#  ClockUserOut(BranchUid: String!, ClockInUid: String!, Lat: Float!, Long: Float!): ClockIn
+  CompleteTask(TaskUid: String!): Response!
+  CreateBranch(Branch: BranchInput!, CompanyUid: String!): Branch!
+  CreateCompany(Company: CompanyInput!): Company!
+  CreateProject(BranchUid: String!, Project: ProjectInput!): Project!
+  CreateTask(BranchUid: String!, Task: TaskInput!): Task!
+#  rename task priority
+  CreateTaskPriority(BranchUid: String!, TaskPriority: TaskPriorityInput!): TaskPriority
+#  CreateTimeTracker(OwnerType: String!, OwnerUid: String!, TimeTracker: TimeTrackerInput!): TimeTracker
+  CreateUser(BranchID: String!, BranchRole: String!, User: UserInput!): User!
+  DeleteBranch(BranchUid: String!): Response
+  DeleteTask(TaskUid: String!): Response
+  DeleteTaskFilter(TaskFilterUid: String!): Response
+#  rename priority
+  DeleteTaskPriority(TaskPriorityUid: String!): Response
+  DeleteTasks(TaskUids: [String!]!): Response
+  DeleteTimeTracker(Uid: String!): Response
+#  EditTimeTracker(TimeTracker: TimeTrackerInput!, Uid: String!): TimeTracker
+  ForceCompleteTask(TaskUid: String!): Response!
+  HoistPublished(ColumnUid: String!): Response
+  Move(AfterUid: String, ColumnUid: String!, ToBeMovedUid: String!): Response
+#  rename priority
+  MoveTaskPriority(Position: Int!, TaskPriorityUid: String!): Response
+  MoveToTheBottomOfAColumn(ColumnUid: String!, ToBeMovedUid: String!): Response
+  PublishProject(ProjectUid: String!): Response!
+  RemovePrerequisitesFromTask(PrerequisiteUids: [String!]!, TaskUid: String!): Response
+#  rename this?
+  RemoveUser(BranchUid: String!, UserUid: String!): Response
+  RemoveUsersFromTask(TaskUid: String!, Users: [String]!): Response!
+  SetTaskDate(Date: String, TaskUid: String!): Task
+  SetTasksStatus(Status: String!, TaskUids: [String!]!): Response!
+  StartTask(TaskUid: String!): Response!
+#  StartTime(OwnerType: String!, OwnerUid: String!): TimeTracker
+#  StopTime(OwnerType: String!, OwnerUid: String!): TimeTracker
+  UnCompleteTask(TaskUid: String!): Response!
+#  what is this?
+  UpdateAllBranchTaskPriorities(TaskPriorities: [TaskPriorityUpdate]!): Response
+  UpdateBranch(Branch: BranchInput!, BranchUid: String!): Branch!
+  UpdateDefaultKanbanForBranch(BranchUid: String!, DefaultKanban: String): Branch
+  UpdateKanbanSettings(BranchUid: String!, KelownaMode: Boolean, PrairieMode: Boolean): Branch
+  UpdateUser(User: UserUpdate!, UserUid: String!): User
+  UpdateProject(Project: ProjectInput!, ProjectUid: String!, Users: [String]!): Project!
+  UpdateTask(Task: TaskUpdate!, TaskUid: String!): Task!
+  UpdateTaskUrgency(TaskUid: String!, Urgency: Boolean!): Response
+  UpdateUserPassword(Password: String!, UserUid: String!): Response
+  CreateKanbanFilter(BranchUid: String!, Columns: [String!]!, FilterName: String!, CompletedMode: String): KanbanFilter
+  SetDefaultUserFilter(BranchUid: String!, FilterUid: String!): Response
+}
+
+type Query {
+  Branches: [Branch!]!
+  BranchTaskFilters(BranchUid: String!): [TaskFilter!]!
+#  rename to priorities
+  BranchTaskPriorities(BranchUid: String!): [TaskPriority]!
+  CompanyBranches(CompanyUid: String!): [Branch!]!
+  GetBranchProjects(BranchUid: String!, From: String, Next: Float, Options: ProjectSearchOptions): ProjectConnection!
+  GetBranchTasks(BranchUid: String!, FilterUid: String, CompletedMode: String): [Task!]!
+  GetBranchUsers(BranchID: String!): [User!]!
+#  Does this need to be paginated? oh yeah probs for the un-positioned column
+  GetColumnTasks(BranchUid: String!, ColumnUid: String, From: String, Next: Float, Options: TaskSearchOptions!): TasksConnection
+  GetCompanyByUid(CompanyUid: String!): Company
+  GetProjectByID(ProjectUid: String!): Project!
+  GetProjectTasks(ProjectUid: String!): [Task]!
+  GetTaskByID(TaskUid: String!): Task!
+  GetUnPositionedTasks(BranchUid: String!, ColumnUid: String!): TasksConnection
+  Me: User!
+  GetKanbanFilters(BranchUid: String!): [KanbanFilter]
+  GetKanbanFilterByUid(FilterUid: String!): KanbanFilter
+  #  GetTimeTrackerByID(TimeTrackerUid: String!): TimeTracker
+  #  GetTimeTrackingForBranch(BranchUid: String!, End: String!, Start: String!): TimeTrackerConnection
+  #  GetTimeTrackingForOwner(OwnerType: String!, OwnerUid: String!): TimeTrackerConnection
+  #  GetTimeTrackingForOwnerByUser(OwnerType: String!, OwnerUid: String!): TimeTrackerConnection
+  #  GetTimeTrackingForUser(End: String!, Start: String!, UserUid: String!): TimeTrackerConnection
+  #  GetTimeTrackingForUserByTime(End: String!, Start: String!): TimeTrackerConnection
+  #  GetClockIn(Uid: String!): ClockIn
+  #  GetClockInsForBranchByTime(BranchUid: String!, End: String!, Start: String!): ClockInConnection
+  #  GetClockInsForUserByTime(BranchUid: String!, End: String!, Start: String!, UserUid: String = "none"): ClockInConnection
+}

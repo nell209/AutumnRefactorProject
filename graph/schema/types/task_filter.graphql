@@ -1,0 +1,21 @@
+type TaskFilterConnection {
+  totalCount: Int!
+  edges: [TaskFilterEdge]
+  pageInfo: PageInfo!
+}
+
+type TaskFilterEdge {
+  cursor: ID!
+  node: TaskFilter
+}
+
+type TaskFilter {
+  ID: ID!
+  name: String!
+  searchOptions: SearchOptions!
+}
+
+input TaskFilterInput {
+  name: String!
+  searchOptions: TaskSearchOptions!
+}

@@ -1,0 +1,5 @@
+type KanbanFilter {
+    ID: ID!
+    name: String!
+    columns: [TaskPriority]! @goField(forceResolver: true)
+}

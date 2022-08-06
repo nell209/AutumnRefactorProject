@@ -1,0 +1,15 @@
+type Branch {
+  ID: ID!
+  companyUid: String!
+  name: String
+  updatedAt: Time
+  createdAt: Time
+  taskPriorities: [TaskPriority!] @goField(forceResolver: true)
+  defaultKanban: String
+  prairieMode: Boolean
+  kelownaMode: Boolean
+}
+
+input BranchInput {
+  name: String!
+}

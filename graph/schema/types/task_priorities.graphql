@@ -1,0 +1,19 @@
+type TaskPriority {
+  ID: ID!
+  description: String!
+  position: Float!
+  color: String!
+  unPositionedCount: Int!
+}
+
+input TaskPriorityInput {
+  description: String!
+  color: String!
+}
+
+input TaskPriorityUpdate {
+  ID: ID!
+  description: String!
+  color: String!
+  position: Float!
+}

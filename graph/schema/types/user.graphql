@@ -1,0 +1,27 @@
+type User {
+  ID: ID
+  firstName: String
+  lastName: String
+  email: String!
+  branches: [Branch] @goField(forceResolver: true)
+  password: String
+  updatedAt: Time
+  createdAt: Time
+  tasks: [Task] @goField(forceResolver: true)
+  defaultFilterUid: String
+}
+
+input UserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+}
+
+input UserUpdate {
+  firstName: String!
+  lastName: String!
+  email: String!
+  profileURL: String!
+  profileID: String!
+}

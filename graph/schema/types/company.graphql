@@ -1,0 +1,34 @@
+type Company {
+  ID: ID!
+  name: String!
+  email: String!
+  address: String!
+  city: String!
+  province: String!
+  country: String!
+  #permissions: Permission
+  updatedAt: Time
+  createdAt: Time
+  paymentStatus: String!
+  paymentMethod: String
+}
+
+input CompanyInput {
+  name: String!
+  email: String!
+  address: String!
+  city: String!
+  province: String!
+  country: String!
+}
+
+type CompaniesConnection {
+  totalCount: Int!
+  edges: [CompanysEdge]
+  pageInfo: PageInfo!
+}
+
+type CompanysEdge {
+  cursor: ID!
+  node: Company
+}

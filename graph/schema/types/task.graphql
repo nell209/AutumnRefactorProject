@@ -1,0 +1,47 @@
+type Task {
+  ID: ID!
+  name: String
+  description: String!
+  projectUid: String!
+  project: Project!
+  completionEstimate: Float
+  urgent: Boolean!
+  sharedToAll: Boolean!
+  updatedAt: Time
+  createdAt: Time
+  startedAt: Time
+  startedBy: User @goField(forceResolver: true)
+  completedAt: Time
+  completedBy: User
+  status: String
+  users: [User] @goField(forceResolver: true)
+  prerequisites: [TaskPrerequisite] @goField(forceResolver: true)
+  postrequisites: [Task] @goField(forceResolver: true)
+  position: Position
+  priority: String
+  priorityPosition: Float
+  date: Time
+}
+
+input TaskInput {
+  projectID: String!
+  name: String!
+  description: String
+  priority: String
+  status: String
+  completionEstimate: Float
+  users: [String!]!
+  teams: [String!]!
+  documents: [String!]!
+  workRoles: [String!]!
+  sharedToAll: Boolean!
+  date: Time
+}
+
+input TaskUpdate {
+  name: String!
+  description: String
+  priority: String
+  status: String
+  completionEstimate: Float
+}

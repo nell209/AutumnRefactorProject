@@ -1,0 +1,4 @@
+type TasksEdge {
+    cursor: ID!
+    node: Task
+}
