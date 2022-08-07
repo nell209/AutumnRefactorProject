@@ -5,12 +5,12 @@ type Project {
   deadline: Time
   updatedAt: Time
   createdAt: Time
-  createdBy: User
+#  createdBy: User @goField(forceResolver: true) @goTag(key: "gorm", value: "foreignKey:UserID")
   deletedAt: Time
-  deletedBy: User @goField(forceResolver: true)
+#  deletedBy: User @goField(forceResolver: true) @goTag(key: "gorm", value: "foreignKey:UserID")
   sharedToAll: Boolean!
   tasks: [Task!]! @goField(forceResolver: true)
-  users: [User!]! @goField(forceResolver: true)
+  users: [User!]! @goField(forceResolver: true) @goTag(key: "gorm", value: "many2many:project_users")
 }
 
 input ProjectInput {

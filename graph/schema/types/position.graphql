@@ -1,4 +1,6 @@
 type Position {
+  ID: ID!
+  taskID: ID!
   pos: Float
   columnUid: String
 }

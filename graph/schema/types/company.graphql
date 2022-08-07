@@ -1,11 +1,7 @@
 type Company {
-  ID: ID!
+  ID: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
   name: String!
-  email: String!
-  address: String!
-  city: String!
-  province: String!
-  country: String!
+  branches: [Branch!]! @goField(forceResolver: true)
   #permissions: Permission
   updatedAt: Time
   createdAt: Time

@@ -11,6 +11,17 @@ import (
 	"github.com/nell209/AutumnRefactor/graph/model"
 )
 
+// Init is the resolver for the Init field.
+func (r *mutationResolver) Init(ctx context.Context) (*model.Response, error) {
+	if err := r.service.Init(ctx); err != nil {
+		return nil, err
+	}
+	return &model.Response{
+		Code:    200,
+		Message: "Success!",
+	}, nil
+}
+
 // AddPrerequisitesToTask is the resolver for the AddPrerequisitesToTask field.
 func (r *mutationResolver) AddPrerequisitesToTask(ctx context.Context, prerequisiteUids []string, taskUID string, typeArg string) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented"))
@@ -57,12 +68,13 @@ func (r *mutationResolver) CreateTask(ctx context.Context, branchUID string, tas
 }
 
 // CreateTaskPriority is the resolver for the CreateTaskPriority field.
-func (r *mutationResolver) CreateTaskPriority(ctx context.Context, branchUID string, taskPriority model.TaskPriorityInput) (*model.TaskPriority, error) {
+func (r *mutationResolver) CreateTaskPriority(ctx context.Context, branchUID string, taskPriority model.ColumnInput) (*model.Column, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
 // CreateUser is the resolver for the CreateUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, branchID string, branchRole string, user model.UserInput) (*model.User, error) {
+	// ensure user is Authorized to do this
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -162,7 +174,7 @@ func (r *mutationResolver) UnCompleteTask(ctx context.Context, taskUID string) (
 }
 
 // UpdateAllBranchTaskPriorities is the resolver for the UpdateAllBranchTaskPriorities field.
-func (r *mutationResolver) UpdateAllBranchTaskPriorities(ctx context.Context, taskPriorities []*model.TaskPriorityUpdate) (*model.Response, error) {
+func (r *mutationResolver) UpdateAllBranchTaskPriorities(ctx context.Context, taskPriorities []*model.ColumnUpdate) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -227,7 +239,7 @@ func (r *queryResolver) BranchTaskFilters(ctx context.Context, branchUID string)
 }
 
 // BranchTaskPriorities is the resolver for the BranchTaskPriorities field.
-func (r *queryResolver) BranchTaskPriorities(ctx context.Context, branchUID string) ([]*model.TaskPriority, error) {
+func (r *queryResolver) BranchTaskPriorities(ctx context.Context, branchUID string) ([]*model.Column, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

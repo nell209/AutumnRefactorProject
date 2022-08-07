@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"github.com/nell209/AutumnRefactor/database"
 	"github.com/nell209/AutumnRefactor/service"
 	"log"
@@ -36,9 +38,16 @@ func main() {
 	}
 	closeable, err := db.DB()
 	if err != nil {
-		panic("database is not closeable")
+		panic(fmt.Sprintf("Failed to get closeable function for database but got error %v", err))
 	}
-	defer closeable.Close()
+	defer func(closeable *sql.DB) {
+		err := closeable.Close()
+		if err != nil {
+			panic(fmt.Sprintf("Failed to close the database connection but got error %v", err))
+		}
+	}(closeable)
+
+	database.Migrate(db)
 
 	resolver := graph.BindServicesToResolver(service.InitializeServices(db))
 	port := os.Getenv("PORT")

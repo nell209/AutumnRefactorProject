@@ -2,7 +2,7 @@ type Task {
   ID: ID!
   name: String
   description: String!
-  projectUid: String!
+  projectID: String!
   project: Project!
   completionEstimate: Float
   urgent: Boolean!
@@ -10,13 +10,13 @@ type Task {
   updatedAt: Time
   createdAt: Time
   startedAt: Time
-  startedBy: User @goField(forceResolver: true)
+#  startedBy: User @goField(forceResolver: true)
   completedAt: Time
-  completedBy: User
+#  completedBy: User
   status: String
-  users: [User] @goField(forceResolver: true)
-  prerequisites: [TaskPrerequisite] @goField(forceResolver: true)
-  postrequisites: [Task] @goField(forceResolver: true)
+  users: [User!]! @goField(forceResolver: true) @goTag(key: "gorm", value: "many2many:task_users")
+  prerequisites: [Task!]! @goField(forceResolver: true) @goTag(key: "gorm", value: "many2many:prerequisite_tasks")
+#  postrequisites: [Task!]! @goField(forceResolver: true) @goTag(key: "gorm", value: "many2many:prerequisite_tasks")
   position: Position
   priority: String
   priorityPosition: Float

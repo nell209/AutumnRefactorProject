@@ -1,5 +1,5 @@
 type KanbanFilter {
     ID: ID!
     name: String!
-    columns: [TaskPriority]! @goField(forceResolver: true)
+    columns: [Column!]! @goField(forceResolver: true) @goTag(key: "gorm", value: "many2many:kanban_filter_columns")
 }

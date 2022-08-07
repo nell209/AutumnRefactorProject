@@ -11,23 +11,13 @@ import (
 	"github.com/nell209/AutumnRefactor/graph/model"
 )
 
-// StartedBy is the resolver for the startedBy field.
-func (r *taskResolver) StartedBy(ctx context.Context, obj *model.Task) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
 // Users is the resolver for the users field.
 func (r *taskResolver) Users(ctx context.Context, obj *model.Task) ([]*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
 // Prerequisites is the resolver for the prerequisites field.
-func (r *taskResolver) Prerequisites(ctx context.Context, obj *model.Task) ([]*model.TaskPrerequisite, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-// Postrequisites is the resolver for the postrequisites field.
-func (r *taskResolver) Postrequisites(ctx context.Context, obj *model.Task) ([]*model.Task, error) {
+func (r *taskResolver) Prerequisites(ctx context.Context, obj *model.Task) ([]*model.Task, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -35,3 +25,16 @@ func (r *taskResolver) Postrequisites(ctx context.Context, obj *model.Task) ([]*
 func (r *Resolver) Task() generated.TaskResolver { return &taskResolver{r} }
 
 type taskResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *taskResolver) Postrequisites(ctx context.Context, obj *model.Task) ([]*model.Task, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+func (r *taskResolver) StartedBy(ctx context.Context, obj *model.Task) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}

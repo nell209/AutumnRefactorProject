@@ -19,6 +19,7 @@ schema {
 }
 
 type Mutation {
+  Init: Response
   AddPrerequisitesToTask(PrerequisiteUids: [String!]!, TaskUid: String!, Type: String!): Response
   AddUsersToTask(TaskUid: String!, Users: [String]!): Response!
   ArchiveProject(ProjectUid: String!): Response!
@@ -31,7 +32,7 @@ type Mutation {
   CreateProject(BranchUid: String!, Project: ProjectInput!): Project!
   CreateTask(BranchUid: String!, Task: TaskInput!): Task!
 #  rename task priority
-  CreateTaskPriority(BranchUid: String!, TaskPriority: TaskPriorityInput!): TaskPriority
+  CreateTaskPriority(BranchUid: String!, TaskPriority: ColumnInput!): Column
 #  CreateTimeTracker(OwnerType: String!, OwnerUid: String!, TimeTracker: TimeTrackerInput!): TimeTracker
   CreateUser(BranchID: String!, BranchRole: String!, User: UserInput!): User!
   DeleteBranch(BranchUid: String!): Response
@@ -60,7 +61,7 @@ type Mutation {
 #  StopTime(OwnerType: String!, OwnerUid: String!): TimeTracker
   UnCompleteTask(TaskUid: String!): Response!
 #  what is this?
-  UpdateAllBranchTaskPriorities(TaskPriorities: [TaskPriorityUpdate]!): Response
+  UpdateAllBranchTaskPriorities(TaskPriorities: [ColumnUpdate]!): Response
   UpdateBranch(Branch: BranchInput!, BranchUid: String!): Branch!
   UpdateDefaultKanbanForBranch(BranchUid: String!, DefaultKanban: String): Branch
   UpdateKanbanSettings(BranchUid: String!, KelownaMode: Boolean, PrairieMode: Boolean): Branch
@@ -77,7 +78,7 @@ type Query {
   Branches: [Branch!]!
   BranchTaskFilters(BranchUid: String!): [TaskFilter!]!
 #  rename to priorities
-  BranchTaskPriorities(BranchUid: String!): [TaskPriority]!
+  BranchTaskPriorities(BranchUid: String!): [Column]!
   CompanyBranches(CompanyUid: String!): [Branch!]!
   GetBranchProjects(BranchUid: String!, From: String, Next: Float, Options: ProjectSearchOptions): ProjectConnection!
   GetBranchTasks(BranchUid: String!, FilterUid: String, CompletedMode: String): [Task!]!

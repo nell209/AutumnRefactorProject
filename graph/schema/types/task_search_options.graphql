@@ -3,10 +3,8 @@ input TaskSearchOptions {
   startedAfter: Time
   completedBefore: Time
   completedAfter: Time
-  projectUids: [String!]
-  userUids: [String!]
-  teamUids: [String!]
-  workRoleUids: [String!]
+  projectIDs: [String!]
+  userIDs: [String!]
   columnIDs: [String!]
   includeUnassigned: Boolean
   status: String
@@ -17,11 +15,9 @@ type SearchOptions {
   startedAfter: String
   completedBefore: String
   completedAfter: String
-  projectUids: [String!]
-  userUids: [String!]
-  teamUids: [String!]
-  workRoleUids: [String!]
-  columnUids: [String!]
+  projectIDs: [String!]
+  userIDs: [String!]
+  columnIDs: [String!]
   includeUnassigned: Boolean
   status: String
 }

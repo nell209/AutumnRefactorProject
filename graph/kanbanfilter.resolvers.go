@@ -12,7 +12,7 @@ import (
 )
 
 // Columns is the resolver for the columns field.
-func (r *kanbanFilterResolver) Columns(ctx context.Context, obj *model.KanbanFilter) ([]*model.TaskPriority, error) {
+func (r *kanbanFilterResolver) Columns(ctx context.Context, obj *model.KanbanFilter) ([]*model.Column, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

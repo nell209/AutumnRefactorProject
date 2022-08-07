@@ -11,8 +11,8 @@ import (
 	"github.com/nell209/AutumnRefactor/graph/model"
 )
 
-// TaskPriorities is the resolver for the taskPriorities field.
-func (r *branchResolver) TaskPriorities(ctx context.Context, obj *model.Branch) ([]*model.TaskPriority, error) {
+// Columns is the resolver for the columns field.
+func (r *branchResolver) Columns(ctx context.Context, obj *model.Branch) ([]*model.Column, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

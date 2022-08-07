@@ -1,17 +1,18 @@
-type TaskPriority {
+type Column {
   ID: ID!
+  BranchID: ID!
   description: String!
   position: Float!
   color: String!
   unPositionedCount: Int!
 }
 
-input TaskPriorityInput {
+input ColumnInput {
   description: String!
   color: String!
 }
 
-input TaskPriorityUpdate {
+input ColumnUpdate {
   ID: ID!
   description: String!
   color: String!
