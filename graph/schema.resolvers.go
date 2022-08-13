@@ -23,7 +23,7 @@ func (r *mutationResolver) Init(ctx context.Context) (*model.Response, error) {
 }
 
 // AddPrerequisitesToTask is the resolver for the AddPrerequisitesToTask field.
-func (r *mutationResolver) AddPrerequisitesToTask(ctx context.Context, prerequisiteUids []string, taskUID string, typeArg string) (*model.Response, error) {
+func (r *mutationResolver) AddPrerequisitesToTask(ctx context.Context, prerequisiteIDs []string, taskUID string, typeArg string) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -72,9 +72,8 @@ func (r *mutationResolver) CreateTaskPriority(ctx context.Context, branchUID str
 	panic(fmt.Errorf("not implemented"))
 }
 
-// CreateUser is the resolver for the CreateUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, branchID string, branchRole string, user model.UserInput) (*model.User, error) {
-	// ensure user is Authorized to do this
+// CreateUserWithTempPass is the resolver for the CreateUserWithTempPass field.
+func (r *mutationResolver) CreateUserWithTempPass(ctx context.Context, branchID string, branchRole string, user model.UserInput) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -113,6 +112,11 @@ func (r *mutationResolver) ForceCompleteTask(ctx context.Context, taskUID string
 	panic(fmt.Errorf("not implemented"))
 }
 
+// GenerateTemporarySignUp is the resolver for the GenerateTemporarySignUp field.
+func (r *mutationResolver) GenerateTemporarySignUp(ctx context.Context, newEmail string) (*model.Response, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // HoistPublished is the resolver for the HoistPublished field.
 func (r *mutationResolver) HoistPublished(ctx context.Context, columnUID string) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented"))
@@ -139,7 +143,7 @@ func (r *mutationResolver) PublishProject(ctx context.Context, projectUID string
 }
 
 // RemovePrerequisitesFromTask is the resolver for the RemovePrerequisitesFromTask field.
-func (r *mutationResolver) RemovePrerequisitesFromTask(ctx context.Context, prerequisiteUids []string, taskUID string) (*model.Response, error) {
+func (r *mutationResolver) RemovePrerequisitesFromTask(ctx context.Context, prerequisiteIDs []string, taskUID string) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -159,7 +163,7 @@ func (r *mutationResolver) SetTaskDate(ctx context.Context, date *string, taskUI
 }
 
 // SetTasksStatus is the resolver for the SetTasksStatus field.
-func (r *mutationResolver) SetTasksStatus(ctx context.Context, status string, taskUids []string) (*model.Response, error) {
+func (r *mutationResolver) SetTasksStatus(ctx context.Context, status string, taskIDs []string) (*model.Response, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -316,3 +320,14 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) CreateUser(ctx context.Context, branchID string, branchRole string, user model.UserInput) (*model.User, error) {
+	// ensure user is Authorized to do this
+	panic(fmt.Errorf("not implemented"))
+}

@@ -8,7 +8,7 @@ import (
 
 type Branch struct {
 	ID          string    `json:"ID" gorm:"type:uuid;default:uuid_generate_v4()"`
-	CompanyID   string    `json:"companyID"`
+	CompanyID   string    `json:"companyID" gorm:"type:uuid"`
 	Name        string    `json:"name"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 	CreatedAt   time.Time `json:"createdAt"`

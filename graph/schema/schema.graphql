@@ -20,7 +20,7 @@ schema {
 
 type Mutation {
   Init: Response
-  AddPrerequisitesToTask(PrerequisiteUids: [String!]!, TaskUid: String!, Type: String!): Response
+  AddPrerequisitesToTask(PrerequisiteIDs: [String!]!, TaskUid: String!, Type: String!): Response
   AddUsersToTask(TaskUid: String!, Users: [String]!): Response!
   ArchiveProject(ProjectUid: String!): Response!
   CancelTask(TaskUid: String!): Response!
@@ -34,7 +34,7 @@ type Mutation {
 #  rename task priority
   CreateTaskPriority(BranchUid: String!, TaskPriority: ColumnInput!): Column
 #  CreateTimeTracker(OwnerType: String!, OwnerUid: String!, TimeTracker: TimeTrackerInput!): TimeTracker
-  CreateUser(BranchID: String!, BranchRole: String!, User: UserInput!): User!
+  CreateUserWithTempPass(BranchID: String!, BranchRole: String!, User: UserInput!): User!
   DeleteBranch(BranchUid: String!): Response
   DeleteTask(TaskUid: String!): Response
   DeleteTaskFilter(TaskFilterUid: String!): Response
@@ -44,18 +44,19 @@ type Mutation {
   DeleteTimeTracker(Uid: String!): Response
 #  EditTimeTracker(TimeTracker: TimeTrackerInput!, Uid: String!): TimeTracker
   ForceCompleteTask(TaskUid: String!): Response!
+  GenerateTemporarySignUp(NewEmail: String!): Response!
   HoistPublished(ColumnUid: String!): Response
   Move(AfterUid: String, ColumnUid: String!, ToBeMovedUid: String!): Response
 #  rename priority
   MoveTaskPriority(Position: Int!, TaskPriorityUid: String!): Response
   MoveToTheBottomOfAColumn(ColumnUid: String!, ToBeMovedUid: String!): Response
   PublishProject(ProjectUid: String!): Response!
-  RemovePrerequisitesFromTask(PrerequisiteUids: [String!]!, TaskUid: String!): Response
+  RemovePrerequisitesFromTask(PrerequisiteIDs: [String!]!, TaskUid: String!): Response
 #  rename this?
   RemoveUser(BranchUid: String!, UserUid: String!): Response
   RemoveUsersFromTask(TaskUid: String!, Users: [String]!): Response!
   SetTaskDate(Date: String, TaskUid: String!): Task
-  SetTasksStatus(Status: String!, TaskUids: [String!]!): Response!
+  SetTasksStatus(Status: String!, TaskIDs: [String!]!): Response!
   StartTask(TaskUid: String!): Response!
 #  StartTime(OwnerType: String!, OwnerUid: String!): TimeTracker
 #  StopTime(OwnerType: String!, OwnerUid: String!): TimeTracker

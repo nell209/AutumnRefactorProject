@@ -1,6 +1,6 @@
 type Branch {
   ID: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
-  companyID: ID!
+  companyID: ID! @goTag(key: "gorm", value: "type:uuid")
   name: String!
   updatedAt: Time!
   createdAt: Time!

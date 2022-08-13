@@ -99,7 +99,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddPrerequisitesToTask        func(childComplexity int, prerequisiteUids []string, taskUID string, typeArg string) int
+		AddPrerequisitesToTask        func(childComplexity int, prerequisiteIDs []string, taskUID string, typeArg string) int
 		AddUsersToTask                func(childComplexity int, taskUID string, users []*string) int
 		ArchiveProject                func(childComplexity int, projectUID string) int
 		CancelTask                    func(childComplexity int, taskUID string) int
@@ -110,7 +110,7 @@ type ComplexityRoot struct {
 		CreateProject                 func(childComplexity int, branchUID string, project model.ProjectInput) int
 		CreateTask                    func(childComplexity int, branchUID string, task model.TaskInput) int
 		CreateTaskPriority            func(childComplexity int, branchUID string, taskPriority model.ColumnInput) int
-		CreateUser                    func(childComplexity int, branchID string, branchRole string, user model.UserInput) int
+		CreateUserWithTempPass        func(childComplexity int, branchID string, branchRole string, user model.UserInput) int
 		DeleteBranch                  func(childComplexity int, branchUID string) int
 		DeleteTask                    func(childComplexity int, taskUID string) int
 		DeleteTaskFilter              func(childComplexity int, taskFilterUID string) int
@@ -118,18 +118,19 @@ type ComplexityRoot struct {
 		DeleteTasks                   func(childComplexity int, taskUids []string) int
 		DeleteTimeTracker             func(childComplexity int, uid string) int
 		ForceCompleteTask             func(childComplexity int, taskUID string) int
+		GenerateTemporarySignUp       func(childComplexity int, newEmail string) int
 		HoistPublished                func(childComplexity int, columnUID string) int
 		Init                          func(childComplexity int) int
 		Move                          func(childComplexity int, afterUID *string, columnUID string, toBeMovedUID string) int
 		MoveTaskPriority              func(childComplexity int, position int, taskPriorityUID string) int
 		MoveToTheBottomOfAColumn      func(childComplexity int, columnUID string, toBeMovedUID string) int
 		PublishProject                func(childComplexity int, projectUID string) int
-		RemovePrerequisitesFromTask   func(childComplexity int, prerequisiteUids []string, taskUID string) int
+		RemovePrerequisitesFromTask   func(childComplexity int, prerequisiteIDs []string, taskUID string) int
 		RemoveUser                    func(childComplexity int, branchUID string, userUID string) int
 		RemoveUsersFromTask           func(childComplexity int, taskUID string, users []*string) int
 		SetDefaultUserFilter          func(childComplexity int, branchUID string, filterUID string) int
 		SetTaskDate                   func(childComplexity int, date *string, taskUID string) int
-		SetTasksStatus                func(childComplexity int, status string, taskUids []string) int
+		SetTasksStatus                func(childComplexity int, status string, taskIDs []string) int
 		StartTask                     func(childComplexity int, taskUID string) int
 		UnCompleteTask                func(childComplexity int, taskUID string) int
 		UpdateAllBranchTaskPriorities func(childComplexity int, taskPriorities []*model.ColumnUpdate) int
@@ -290,7 +291,7 @@ type KanbanFilterResolver interface {
 }
 type MutationResolver interface {
 	Init(ctx context.Context) (*model.Response, error)
-	AddPrerequisitesToTask(ctx context.Context, prerequisiteUids []string, taskUID string, typeArg string) (*model.Response, error)
+	AddPrerequisitesToTask(ctx context.Context, prerequisiteIDs []string, taskUID string, typeArg string) (*model.Response, error)
 	AddUsersToTask(ctx context.Context, taskUID string, users []*string) (*model.Response, error)
 	ArchiveProject(ctx context.Context, projectUID string) (*model.Response, error)
 	CancelTask(ctx context.Context, taskUID string) (*model.Response, error)
@@ -300,7 +301,7 @@ type MutationResolver interface {
 	CreateProject(ctx context.Context, branchUID string, project model.ProjectInput) (*model.Project, error)
 	CreateTask(ctx context.Context, branchUID string, task model.TaskInput) (*model.Task, error)
 	CreateTaskPriority(ctx context.Context, branchUID string, taskPriority model.ColumnInput) (*model.Column, error)
-	CreateUser(ctx context.Context, branchID string, branchRole string, user model.UserInput) (*model.User, error)
+	CreateUserWithTempPass(ctx context.Context, branchID string, branchRole string, user model.UserInput) (*model.User, error)
 	DeleteBranch(ctx context.Context, branchUID string) (*model.Response, error)
 	DeleteTask(ctx context.Context, taskUID string) (*model.Response, error)
 	DeleteTaskFilter(ctx context.Context, taskFilterUID string) (*model.Response, error)
@@ -308,16 +309,17 @@ type MutationResolver interface {
 	DeleteTasks(ctx context.Context, taskUids []string) (*model.Response, error)
 	DeleteTimeTracker(ctx context.Context, uid string) (*model.Response, error)
 	ForceCompleteTask(ctx context.Context, taskUID string) (*model.Response, error)
+	GenerateTemporarySignUp(ctx context.Context, newEmail string) (*model.Response, error)
 	HoistPublished(ctx context.Context, columnUID string) (*model.Response, error)
 	Move(ctx context.Context, afterUID *string, columnUID string, toBeMovedUID string) (*model.Response, error)
 	MoveTaskPriority(ctx context.Context, position int, taskPriorityUID string) (*model.Response, error)
 	MoveToTheBottomOfAColumn(ctx context.Context, columnUID string, toBeMovedUID string) (*model.Response, error)
 	PublishProject(ctx context.Context, projectUID string) (*model.Response, error)
-	RemovePrerequisitesFromTask(ctx context.Context, prerequisiteUids []string, taskUID string) (*model.Response, error)
+	RemovePrerequisitesFromTask(ctx context.Context, prerequisiteIDs []string, taskUID string) (*model.Response, error)
 	RemoveUser(ctx context.Context, branchUID string, userUID string) (*model.Response, error)
 	RemoveUsersFromTask(ctx context.Context, taskUID string, users []*string) (*model.Response, error)
 	SetTaskDate(ctx context.Context, date *string, taskUID string) (*model.Task, error)
-	SetTasksStatus(ctx context.Context, status string, taskUids []string) (*model.Response, error)
+	SetTasksStatus(ctx context.Context, status string, taskIDs []string) (*model.Response, error)
 	StartTask(ctx context.Context, taskUID string) (*model.Response, error)
 	UnCompleteTask(ctx context.Context, taskUID string) (*model.Response, error)
 	UpdateAllBranchTaskPriorities(ctx context.Context, taskPriorities []*model.ColumnUpdate) (*model.Response, error)
@@ -590,7 +592,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddPrerequisitesToTask(childComplexity, args["PrerequisiteUids"].([]string), args["TaskUid"].(string), args["Type"].(string)), true
+		return e.complexity.Mutation.AddPrerequisitesToTask(childComplexity, args["PrerequisiteIDs"].([]string), args["TaskUid"].(string), args["Type"].(string)), true
 
 	case "Mutation.AddUsersToTask":
 		if e.complexity.Mutation.AddUsersToTask == nil {
@@ -712,17 +714,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateTaskPriority(childComplexity, args["BranchUid"].(string), args["TaskPriority"].(model.ColumnInput)), true
 
-	case "Mutation.CreateUser":
-		if e.complexity.Mutation.CreateUser == nil {
+	case "Mutation.CreateUserWithTempPass":
+		if e.complexity.Mutation.CreateUserWithTempPass == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_CreateUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_CreateUserWithTempPass_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUser(childComplexity, args["BranchID"].(string), args["BranchRole"].(string), args["User"].(model.UserInput)), true
+		return e.complexity.Mutation.CreateUserWithTempPass(childComplexity, args["BranchID"].(string), args["BranchRole"].(string), args["User"].(model.UserInput)), true
 
 	case "Mutation.DeleteBranch":
 		if e.complexity.Mutation.DeleteBranch == nil {
@@ -808,6 +810,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ForceCompleteTask(childComplexity, args["TaskUid"].(string)), true
 
+	case "Mutation.GenerateTemporarySignUp":
+		if e.complexity.Mutation.GenerateTemporarySignUp == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_GenerateTemporarySignUp_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.GenerateTemporarySignUp(childComplexity, args["NewEmail"].(string)), true
+
 	case "Mutation.HoistPublished":
 		if e.complexity.Mutation.HoistPublished == nil {
 			break
@@ -885,7 +899,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemovePrerequisitesFromTask(childComplexity, args["PrerequisiteUids"].([]string), args["TaskUid"].(string)), true
+		return e.complexity.Mutation.RemovePrerequisitesFromTask(childComplexity, args["PrerequisiteIDs"].([]string), args["TaskUid"].(string)), true
 
 	case "Mutation.RemoveUser":
 		if e.complexity.Mutation.RemoveUser == nil {
@@ -945,7 +959,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.SetTasksStatus(childComplexity, args["Status"].(string), args["TaskUids"].([]string)), true
+		return e.complexity.Mutation.SetTasksStatus(childComplexity, args["Status"].(string), args["TaskIDs"].([]string)), true
 
 	case "Mutation.StartTask":
 		if e.complexity.Mutation.StartTask == nil {
@@ -1881,7 +1895,7 @@ schema {
 
 type Mutation {
   Init: Response
-  AddPrerequisitesToTask(PrerequisiteUids: [String!]!, TaskUid: String!, Type: String!): Response
+  AddPrerequisitesToTask(PrerequisiteIDs: [String!]!, TaskUid: String!, Type: String!): Response
   AddUsersToTask(TaskUid: String!, Users: [String]!): Response!
   ArchiveProject(ProjectUid: String!): Response!
   CancelTask(TaskUid: String!): Response!
@@ -1895,7 +1909,7 @@ type Mutation {
 #  rename task priority
   CreateTaskPriority(BranchUid: String!, TaskPriority: ColumnInput!): Column
 #  CreateTimeTracker(OwnerType: String!, OwnerUid: String!, TimeTracker: TimeTrackerInput!): TimeTracker
-  CreateUser(BranchID: String!, BranchRole: String!, User: UserInput!): User!
+  CreateUserWithTempPass(BranchID: String!, BranchRole: String!, User: UserInput!): User!
   DeleteBranch(BranchUid: String!): Response
   DeleteTask(TaskUid: String!): Response
   DeleteTaskFilter(TaskFilterUid: String!): Response
@@ -1905,18 +1919,19 @@ type Mutation {
   DeleteTimeTracker(Uid: String!): Response
 #  EditTimeTracker(TimeTracker: TimeTrackerInput!, Uid: String!): TimeTracker
   ForceCompleteTask(TaskUid: String!): Response!
+  GenerateTemporarySignUp(NewEmail: String!): Response!
   HoistPublished(ColumnUid: String!): Response
   Move(AfterUid: String, ColumnUid: String!, ToBeMovedUid: String!): Response
 #  rename priority
   MoveTaskPriority(Position: Int!, TaskPriorityUid: String!): Response
   MoveToTheBottomOfAColumn(ColumnUid: String!, ToBeMovedUid: String!): Response
   PublishProject(ProjectUid: String!): Response!
-  RemovePrerequisitesFromTask(PrerequisiteUids: [String!]!, TaskUid: String!): Response
+  RemovePrerequisitesFromTask(PrerequisiteIDs: [String!]!, TaskUid: String!): Response
 #  rename this?
   RemoveUser(BranchUid: String!, UserUid: String!): Response
   RemoveUsersFromTask(TaskUid: String!, Users: [String]!): Response!
   SetTaskDate(Date: String, TaskUid: String!): Task
-  SetTasksStatus(Status: String!, TaskUids: [String!]!): Response!
+  SetTasksStatus(Status: String!, TaskIDs: [String!]!): Response!
   StartTask(TaskUid: String!): Response!
 #  StartTime(OwnerType: String!, OwnerUid: String!): TimeTracker
 #  StopTime(OwnerType: String!, OwnerUid: String!): TimeTracker
@@ -1967,7 +1982,7 @@ type Query {
 `, BuiltIn: false},
 	{Name: "../schema/types/branch.graphql", Input: `type Branch {
   ID: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
-  companyID: ID!
+  companyID: ID! @goTag(key: "gorm", value: "type:uuid")
   name: String!
   updatedAt: Time!
   createdAt: Time!
@@ -2232,14 +2247,14 @@ func (ec *executionContext) field_Mutation_AddPrerequisitesToTask_args(ctx conte
 	var err error
 	args := map[string]interface{}{}
 	var arg0 []string
-	if tmp, ok := rawArgs["PrerequisiteUids"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PrerequisiteUids"))
+	if tmp, ok := rawArgs["PrerequisiteIDs"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PrerequisiteIDs"))
 		arg0, err = ec.unmarshalNString2ᚕstringᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["PrerequisiteUids"] = arg0
+	args["PrerequisiteIDs"] = arg0
 	var arg1 string
 	if tmp, ok := rawArgs["TaskUid"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("TaskUid"))
@@ -2483,7 +2498,7 @@ func (ec *executionContext) field_Mutation_CreateTask_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_CreateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_CreateUserWithTempPass_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -2621,6 +2636,21 @@ func (ec *executionContext) field_Mutation_ForceCompleteTask_args(ctx context.Co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_GenerateTemporarySignUp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["NewEmail"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("NewEmail"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["NewEmail"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_HoistPublished_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2736,14 +2766,14 @@ func (ec *executionContext) field_Mutation_RemovePrerequisitesFromTask_args(ctx 
 	var err error
 	args := map[string]interface{}{}
 	var arg0 []string
-	if tmp, ok := rawArgs["PrerequisiteUids"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PrerequisiteUids"))
+	if tmp, ok := rawArgs["PrerequisiteIDs"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("PrerequisiteIDs"))
 		arg0, err = ec.unmarshalNString2ᚕstringᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["PrerequisiteUids"] = arg0
+	args["PrerequisiteIDs"] = arg0
 	var arg1 string
 	if tmp, ok := rawArgs["TaskUid"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("TaskUid"))
@@ -2865,14 +2895,14 @@ func (ec *executionContext) field_Mutation_SetTasksStatus_args(ctx context.Conte
 	}
 	args["Status"] = arg0
 	var arg1 []string
-	if tmp, ok := rawArgs["TaskUids"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("TaskUids"))
+	if tmp, ok := rawArgs["TaskIDs"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("TaskIDs"))
 		arg1, err = ec.unmarshalNString2ᚕstringᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["TaskUids"] = arg1
+	args["TaskIDs"] = arg1
 	return args, nil
 }
 
@@ -4876,7 +4906,7 @@ func (ec *executionContext) _Mutation_AddPrerequisitesToTask(ctx context.Context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddPrerequisitesToTask(rctx, fc.Args["PrerequisiteUids"].([]string), fc.Args["TaskUid"].(string), fc.Args["Type"].(string))
+		return ec.resolvers.Mutation().AddPrerequisitesToTask(rctx, fc.Args["PrerequisiteIDs"].([]string), fc.Args["TaskUid"].(string), fc.Args["Type"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5546,8 +5576,8 @@ func (ec *executionContext) fieldContext_Mutation_CreateTaskPriority(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_CreateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_CreateUser(ctx, field)
+func (ec *executionContext) _Mutation_CreateUserWithTempPass(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_CreateUserWithTempPass(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5560,7 +5590,7 @@ func (ec *executionContext) _Mutation_CreateUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["BranchID"].(string), fc.Args["BranchRole"].(string), fc.Args["User"].(model.UserInput))
+		return ec.resolvers.Mutation().CreateUserWithTempPass(rctx, fc.Args["BranchID"].(string), fc.Args["BranchRole"].(string), fc.Args["User"].(model.UserInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5577,7 +5607,7 @@ func (ec *executionContext) _Mutation_CreateUser(ctx context.Context, field grap
 	return ec.marshalNUser2ᚖgithubᚗcomᚋnell209ᚋAutumnRefactorᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_CreateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_CreateUserWithTempPass(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -5614,7 +5644,7 @@ func (ec *executionContext) fieldContext_Mutation_CreateUser(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_CreateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_CreateUserWithTempPass_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -6030,6 +6060,67 @@ func (ec *executionContext) fieldContext_Mutation_ForceCompleteTask(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_GenerateTemporarySignUp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_GenerateTemporarySignUp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().GenerateTemporarySignUp(rctx, fc.Args["NewEmail"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Response)
+	fc.Result = res
+	return ec.marshalNResponse2ᚖgithubᚗcomᚋnell209ᚋAutumnRefactorᚋgraphᚋmodelᚐResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_GenerateTemporarySignUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "code":
+				return ec.fieldContext_Response_code(ctx, field)
+			case "message":
+				return ec.fieldContext_Response_message(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Response", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_GenerateTemporarySignUp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_HoistPublished(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_HoistPublished(ctx, field)
 	if err != nil {
@@ -6337,7 +6428,7 @@ func (ec *executionContext) _Mutation_RemovePrerequisitesFromTask(ctx context.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemovePrerequisitesFromTask(rctx, fc.Args["PrerequisiteUids"].([]string), fc.Args["TaskUid"].(string))
+		return ec.resolvers.Mutation().RemovePrerequisitesFromTask(rctx, fc.Args["PrerequisiteIDs"].([]string), fc.Args["TaskUid"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6606,7 +6697,7 @@ func (ec *executionContext) _Mutation_SetTasksStatus(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().SetTasksStatus(rctx, fc.Args["Status"].(string), fc.Args["TaskUids"].([]string))
+		return ec.resolvers.Mutation().SetTasksStatus(rctx, fc.Args["Status"].(string), fc.Args["TaskIDs"].([]string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15193,10 +15284,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_CreateTaskPriority(ctx, field)
 			})
 
-		case "CreateUser":
+		case "CreateUserWithTempPass":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_CreateUser(ctx, field)
+				return ec._Mutation_CreateUserWithTempPass(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -15242,6 +15333,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_ForceCompleteTask(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "GenerateTemporarySignUp":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_GenerateTemporarySignUp(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
