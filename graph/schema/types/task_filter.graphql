@@ -10,7 +10,7 @@ type TaskFilterEdge {
 }
 
 type TaskFilter {
-  ID: ID!
+  id: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
   name: String!
   searchOptions: SearchOptions!
 }

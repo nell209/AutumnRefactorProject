@@ -1,5 +1,0 @@
-type TasksConnection {
-    totalCount: Int!
-    edges: [TasksEdge]
-    pageInfo: PageInfo!
-}

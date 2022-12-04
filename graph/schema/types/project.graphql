@@ -1,16 +1,15 @@
 type Project {
-  ID: ID
-  name: String
+  id: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
+  name: String!
   description: String
   deadline: Time
-  updatedAt: Time
-  createdAt: Time
+  branchId: String!
+  updatedAt: Time!
+  createdAt: Time!
 #  createdBy: User @goField(forceResolver: true) @goTag(key: "gorm", value: "foreignKey:UserID")
   deletedAt: Time
 #  deletedBy: User @goField(forceResolver: true) @goTag(key: "gorm", value: "foreignKey:UserID")
-  sharedToAll: Boolean!
   tasks: [Task!]! @goField(forceResolver: true)
-  users: [User!]! @goField(forceResolver: true) @goTag(key: "gorm", value: "many2many:project_users")
 }
 
 input ProjectInput {

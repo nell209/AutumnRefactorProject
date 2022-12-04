@@ -1,10 +1,10 @@
 type Column {
-  ID: ID!
-  BranchID: ID!
-  description: String!
-  position: Float!
-  color: String!
-  unPositionedCount: Int!
+  id: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
+  BranchId: ID!
+  name: String!
+  position: Int!
+  color: String
+  Tasks: [Task!]! @goField(forceResolver: true)
 }
 
 input ColumnInput {
@@ -13,7 +13,7 @@ input ColumnInput {
 }
 
 input ColumnUpdate {
-  ID: ID!
+  id: ID!
   description: String!
   color: String!
   position: Float!

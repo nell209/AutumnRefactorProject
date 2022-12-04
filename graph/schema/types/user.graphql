@@ -1,13 +1,15 @@
 type User {
-  ID: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
+  Id: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
   firstName: String!
   lastName: String!
   email: String!
-  password: String!
+  password: String
   updatedAt: Time
   createdAt: Time
   tasks: [Task!]! @goField(forceResolver: true) @goTag(key: "gorm", value: "many2many:user_tasks")
+  branchId: String!
   defaultFilterUid: String
+  role: String
 }
 
 input UserInput {

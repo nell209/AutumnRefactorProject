@@ -7,14 +7,14 @@ import (
 )
 
 type Branch struct {
-	ID          string    `json:"ID" gorm:"type:uuid;default:uuid_generate_v4()"`
-	CompanyID   string    `json:"companyID" gorm:"type:uuid"`
-	Name        string    `json:"name"`
-	UpdatedAt   time.Time `json:"updatedAt"`
-	CreatedAt   time.Time `json:"createdAt"`
-	Columns     []*Column `json:"columns"`
-	PrairieMode *bool     `json:"prairieMode"`
-	KelownaMode *bool     `json:"kelownaMode"`
+	ID        string     `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
+	Name      string     `json:"name"`
+	CompanyID string     `json:"companyId" gorm:"type:uuid"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt time.Time  `json:"createdAt"`
+	Columns   []*Column  `json:"columns"`
+	Users     []*User    `json:"users"`
+	Projects  []*Project `json:"projects"`
 }
 
 type BranchInput struct {
@@ -22,12 +22,12 @@ type BranchInput struct {
 }
 
 type Column struct {
-	ID                string  `json:"ID"`
-	BranchID          string  `json:"BranchID"`
-	Description       string  `json:"description"`
-	Position          float64 `json:"position"`
-	Color             string  `json:"color"`
-	UnPositionedCount int     `json:"unPositionedCount"`
+	ID       string  `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
+	BranchID string  `json:"BranchId"`
+	Name     string  `json:"name"`
+	Position int     `json:"position"`
+	Color    *string `json:"color"`
+	Tasks    []*Task `json:"Tasks"`
 }
 
 type ColumnInput struct {
@@ -36,7 +36,7 @@ type ColumnInput struct {
 }
 
 type ColumnUpdate struct {
-	ID          string  `json:"ID"`
+	ID          string  `json:"id"`
 	Description string  `json:"description"`
 	Color       string  `json:"color"`
 	Position    float64 `json:"position"`
@@ -49,7 +49,7 @@ type CompaniesConnection struct {
 }
 
 type Company struct {
-	ID            string     `json:"ID" gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID            string     `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	Name          string     `json:"name"`
 	Branches      []*Branch  `json:"branches"`
 	UpdatedAt     *time.Time `json:"updatedAt"`
@@ -73,7 +73,7 @@ type CompanysEdge struct {
 }
 
 type KanbanFilter struct {
-	ID      string    `json:"ID"`
+	ID      string    `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	Name    string    `json:"name"`
 	Columns []*Column `json:"columns" gorm:"many2many:kanban_filter_columns"`
 }
@@ -85,23 +85,22 @@ type PageInfo struct {
 }
 
 type Position struct {
-	ID        string   `json:"ID"`
+	ID        string   `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	TaskID    string   `json:"taskID"`
 	Pos       *float64 `json:"pos"`
 	ColumnUID *string  `json:"columnUid"`
 }
 
 type Project struct {
-	ID          *string    `json:"ID"`
-	Name        *string    `json:"name"`
+	ID          string     `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
+	Name        string     `json:"name"`
 	Description *string    `json:"description"`
 	Deadline    *time.Time `json:"deadline"`
-	UpdatedAt   *time.Time `json:"updatedAt"`
-	CreatedAt   *time.Time `json:"createdAt"`
+	BranchID    string     `json:"branchId"`
+	UpdatedAt   time.Time  `json:"updatedAt"`
+	CreatedAt   time.Time  `json:"createdAt"`
 	DeletedAt   *time.Time `json:"deletedAt"`
-	SharedToAll bool       `json:"sharedToAll"`
 	Tasks       []*Task    `json:"tasks"`
-	Users       []*User    `json:"users" gorm:"many2many:project_users"`
 }
 
 type ProjectConnection struct {
@@ -138,37 +137,34 @@ type SearchOptions struct {
 	StartedAfter      *string  `json:"startedAfter"`
 	CompletedBefore   *string  `json:"completedBefore"`
 	CompletedAfter    *string  `json:"completedAfter"`
-	ProjectIDs        []string `json:"projectIDs"`
-	UserIDs           []string `json:"userIDs"`
-	ColumnIDs         []string `json:"columnIDs"`
+	ProjectIds        []string `json:"projectIds"`
+	UserIds           []string `json:"userIds"`
+	ColumnIds         []string `json:"columnIds"`
 	IncludeUnassigned *bool    `json:"includeUnassigned"`
 	Status            *string  `json:"status"`
 }
 
 type Task struct {
-	ID                 string     `json:"ID"`
-	Name               *string    `json:"name"`
-	Description        string     `json:"description"`
-	ProjectID          string     `json:"projectID"`
+	ID                 string     `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
+	Name               string     `json:"name"`
+	Description        *string    `json:"description"`
+	ProjectID          string     `json:"projectId"`
 	Project            *Project   `json:"project"`
 	CompletionEstimate *float64   `json:"completionEstimate"`
 	Urgent             bool       `json:"urgent"`
-	SharedToAll        bool       `json:"sharedToAll"`
-	UpdatedAt          *time.Time `json:"updatedAt"`
-	CreatedAt          *time.Time `json:"createdAt"`
+	UpdatedAt          time.Time  `json:"updatedAt"`
+	CreatedAt          time.Time  `json:"createdAt"`
 	StartedAt          *time.Time `json:"startedAt"`
 	CompletedAt        *time.Time `json:"completedAt"`
-	Status             *string    `json:"status"`
 	Users              []*User    `json:"users" gorm:"many2many:task_users"`
 	Prerequisites      []*Task    `json:"prerequisites" gorm:"many2many:prerequisite_tasks"`
-	Position           *Position  `json:"position"`
-	Priority           *string    `json:"priority"`
-	PriorityPosition   *float64   `json:"priorityPosition"`
+	ColumnPosition     *int       `json:"columnPosition"`
+	ColumnID           *string    `json:"columnId"`
 	Date               *time.Time `json:"date"`
 }
 
 type TaskFilter struct {
-	ID            string         `json:"ID"`
+	ID            string         `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	Name          string         `json:"name"`
 	SearchOptions *SearchOptions `json:"searchOptions"`
 }
@@ -190,16 +186,11 @@ type TaskFilterInput struct {
 }
 
 type TaskInput struct {
-	ProjectID          string     `json:"projectID"`
+	ProjectID          string     `json:"projectId"`
 	Name               string     `json:"name"`
 	Description        *string    `json:"description"`
-	Priority           *string    `json:"priority"`
-	Status             *string    `json:"status"`
 	CompletionEstimate *float64   `json:"completionEstimate"`
 	Users              []string   `json:"users"`
-	Teams              []string   `json:"teams"`
-	Documents          []string   `json:"documents"`
-	WorkRoles          []string   `json:"workRoles"`
 	SharedToAll        bool       `json:"sharedToAll"`
 	Date               *time.Time `json:"date"`
 }
@@ -209,9 +200,9 @@ type TaskSearchOptions struct {
 	StartedAfter      *time.Time `json:"startedAfter"`
 	CompletedBefore   *time.Time `json:"completedBefore"`
 	CompletedAfter    *time.Time `json:"completedAfter"`
-	ProjectIDs        []string   `json:"projectIDs"`
-	UserIDs           []string   `json:"userIDs"`
-	ColumnIDs         []string   `json:"columnIDs"`
+	ProjectIds        []string   `json:"projectIds"`
+	UserIds           []string   `json:"userIds"`
+	ColumnIds         []string   `json:"columnIds"`
 	IncludeUnassigned *bool      `json:"includeUnassigned"`
 	Status            *string    `json:"status"`
 	Search            *string    `json:"search"`
@@ -225,27 +216,18 @@ type TaskUpdate struct {
 	CompletionEstimate *float64 `json:"completionEstimate"`
 }
 
-type TasksConnection struct {
-	TotalCount int          `json:"totalCount"`
-	Edges      []*TasksEdge `json:"edges"`
-	PageInfo   *PageInfo    `json:"pageInfo"`
-}
-
-type TasksEdge struct {
-	Cursor string `json:"cursor"`
-	Node   *Task  `json:"node"`
-}
-
 type User struct {
-	ID               string     `json:"ID" gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID               string     `json:"Id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	FirstName        string     `json:"firstName"`
 	LastName         string     `json:"lastName"`
 	Email            string     `json:"email"`
-	Password         string     `json:"password"`
+	Password         *string    `json:"password"`
 	UpdatedAt        *time.Time `json:"updatedAt"`
 	CreatedAt        *time.Time `json:"createdAt"`
 	Tasks            []*Task    `json:"tasks" gorm:"many2many:user_tasks"`
+	BranchID         string     `json:"branchId"`
 	DefaultFilterUID *string    `json:"defaultFilterUid"`
+	Role             *string    `json:"role"`
 }
 
 type UserInput struct {

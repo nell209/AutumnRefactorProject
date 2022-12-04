@@ -15,85 +15,87 @@ directive @goTag(
 
 schema {
   query: Query
-  mutation: Mutation
+#  mutation: Mutation
 }
 
-type Mutation {
-  Init: Response
-  AddPrerequisitesToTask(PrerequisiteIDs: [String!]!, TaskUid: String!, Type: String!): Response
-  AddUsersToTask(TaskUid: String!, Users: [String]!): Response!
-  ArchiveProject(ProjectUid: String!): Response!
-  CancelTask(TaskUid: String!): Response!
+#type Mutation {
+#  AddPrerequisitesToTask(PrerequisiteIDs: [String!]!, TaskUid: String!, Type: String!): Response
+#  AddUsersToTask(TaskUid: String!, Users: [String]!): Response!
+#  ArchiveProject(ProjectUid: String!): Response!
+#  CancelTask(TaskUid: String!): Response!
 #  ClockUserIn(BranchUid: String!, Lat: Float!, Long: Float!): ClockIn
 #  ClockUserOut(BranchUid: String!, ClockInUid: String!, Lat: Float!, Long: Float!): ClockIn
-  CompleteTask(TaskUid: String!): Response!
-  CreateBranch(Branch: BranchInput!, CompanyUid: String!): Branch!
-  CreateCompany(Company: CompanyInput!): Company!
-  CreateProject(BranchUid: String!, Project: ProjectInput!): Project!
-  CreateTask(BranchUid: String!, Task: TaskInput!): Task!
+#  CompleteTask(TaskUid: String!): Response!
+#  CreateBranch(Branch: BranchInput!, CompanyUid: String!): Branch!
+#  CreateCompany(Company: CompanyInput!): Company!
+#  CreateProject(BranchUid: String!, ProjectInfo: ProjectInput!): Project!
+#  CreateTask(TaskInfo: TaskInput!): Task!
 #  rename task priority
-  CreateTaskPriority(BranchUid: String!, TaskPriority: ColumnInput!): Column
+#  CreateColumn(BranchUid: String!, Column: ColumnInput!): Column!
 #  CreateTimeTracker(OwnerType: String!, OwnerUid: String!, TimeTracker: TimeTrackerInput!): TimeTracker
-  CreateUserWithTempPass(BranchID: String!, BranchRole: String!, User: UserInput!): User!
-  DeleteBranch(BranchUid: String!): Response
-  DeleteTask(TaskUid: String!): Response
-  DeleteTaskFilter(TaskFilterUid: String!): Response
+#  CreateUserWithTempPass(BranchID: String!, BranchRole: String!, User: UserInput!): User!
+#  DeleteBranch(BranchUid: String!): Response
+#  DeleteTask(TaskUid: String!): Response
+#  DeleteTaskFilter(TaskFilterUid: String!): Response
 #  rename priority
-  DeleteTaskPriority(TaskPriorityUid: String!): Response
-  DeleteTasks(TaskUids: [String!]!): Response
-  DeleteTimeTracker(Uid: String!): Response
+#  DeleteTaskPriority(TaskPriorityUid: String!): Response
+#  DeleteTasks(TaskUids: [String!]!): Response
+#  DeleteTimeTracker(Uid: String!): Response
 #  EditTimeTracker(TimeTracker: TimeTrackerInput!, Uid: String!): TimeTracker
-  ForceCompleteTask(TaskUid: String!): Response!
-  GenerateTemporarySignUp(NewEmail: String!): Response!
-  HoistPublished(ColumnUid: String!): Response
-  Move(AfterUid: String, ColumnUid: String!, ToBeMovedUid: String!): Response
+#  ForceCompleteTask(TaskUid: String!): Response!
+#  GenerateTemporarySignUp(NewEmail: String!, TempPassword: String): Response!
+#  HoistPublished(ColumnUid: String!): Response
+#  Move(AfterUid: String, ColumnUid: String!, ToBeMovedUid: String!): Response
 #  rename priority
-  MoveTaskPriority(Position: Int!, TaskPriorityUid: String!): Response
-  MoveToTheBottomOfAColumn(ColumnUid: String!, ToBeMovedUid: String!): Response
-  PublishProject(ProjectUid: String!): Response!
-  RemovePrerequisitesFromTask(PrerequisiteIDs: [String!]!, TaskUid: String!): Response
+#  MoveTaskPriority(Position: Int!, TaskPriorityUid: String!): Response
+#  MoveToTheBottomOfAColumn(ColumnUid: String!, ToBeMovedUid: String!): Response
+#  PublishProject(ProjectUid: String!): Response!
+#  RemovePrerequisitesFromTask(PrerequisiteIDs: [String!]!, TaskUid: String!): Response
 #  rename this?
-  RemoveUser(BranchUid: String!, UserUid: String!): Response
-  RemoveUsersFromTask(TaskUid: String!, Users: [String]!): Response!
-  SetTaskDate(Date: String, TaskUid: String!): Task
-  SetTasksStatus(Status: String!, TaskIDs: [String!]!): Response!
-  StartTask(TaskUid: String!): Response!
+#  RemoveUser(BranchUid: String!, UserUid: String!): Response
+#  RemoveUsersFromTask(TaskUid: String!, Users: [String]!): Response!
+#  SetPermanentPassword(Password: String!, FirstName: String!, LastName: String!): Response!
+#  SetTaskDate(Date: String, TaskUid: String!): Task
+#  SetTasksStatus(Status: String!, TaskIDs: [String!]!): Response!
+#  StartTask(TaskUid: String!): Response!
 #  StartTime(OwnerType: String!, OwnerUid: String!): TimeTracker
 #  StopTime(OwnerType: String!, OwnerUid: String!): TimeTracker
-  UnCompleteTask(TaskUid: String!): Response!
+#  UnCompleteTask(TaskUid: String!): Response!
 #  what is this?
-  UpdateAllBranchTaskPriorities(TaskPriorities: [ColumnUpdate]!): Response
-  UpdateBranch(Branch: BranchInput!, BranchUid: String!): Branch!
-  UpdateDefaultKanbanForBranch(BranchUid: String!, DefaultKanban: String): Branch
-  UpdateKanbanSettings(BranchUid: String!, KelownaMode: Boolean, PrairieMode: Boolean): Branch
-  UpdateUser(User: UserUpdate!, UserUid: String!): User
-  UpdateProject(Project: ProjectInput!, ProjectUid: String!, Users: [String]!): Project!
-  UpdateTask(Task: TaskUpdate!, TaskUid: String!): Task!
-  UpdateTaskUrgency(TaskUid: String!, Urgency: Boolean!): Response
-  UpdateUserPassword(Password: String!, UserUid: String!): Response
-  CreateKanbanFilter(BranchUid: String!, Columns: [String!]!, FilterName: String!, CompletedMode: String): KanbanFilter
-  SetDefaultUserFilter(BranchUid: String!, FilterUid: String!): Response
-}
+#  UpdateAllBranchTaskPriorities(TaskPriorities: [ColumnUpdate]!): Response
+#  UpdateBranch(Branch: BranchInput!, BranchUid: String!): Branch!
+#  UpdateDefaultKanbanForBranch(BranchUid: String!, DefaultKanban: String): Branch
+#  UpdateKanbanSettings(BranchUid: String!, KelownaMode: Boolean, PrairieMode: Boolean): Branch
+#  UpdateUser(User: UserUpdate!, UserUid: String!): User
+#  UpdateProject(ProjectInfo: ProjectInput!, ProjectUid: String!): Project!
+#  UpdateTask(Task: TaskUpdate!, TaskUid: String!): Task!
+#  UpdateTaskUrgency(TaskUid: String!, Urgency: Boolean!): Response
+#  UpdateUserPassword(Password: String!, UserUid: String!): Response
+#  CreateKanbanFilter(BranchUid: String!, Columns: [String!]!, FilterName: String!, CompletedMode: String): KanbanFilter
+#  SetDefaultUserFilter(BranchUid: String!, FilterUid: String!): Response
+#}
 
 type Query {
-  Branches: [Branch!]!
-  BranchTaskFilters(BranchUid: String!): [TaskFilter!]!
+#  GetBranches: [Branch!]!
+  branch(branchId: String!): Branch
+  getUnassignedTasks(branchId: String!): [Task!]!
+#  BranchTaskFilters(BranchUid: String!): [TaskFilter!]!
 #  rename to priorities
-  BranchTaskPriorities(BranchUid: String!): [Column]!
-  CompanyBranches(CompanyUid: String!): [Branch!]!
-  GetBranchProjects(BranchUid: String!, From: String, Next: Float, Options: ProjectSearchOptions): ProjectConnection!
-  GetBranchTasks(BranchUid: String!, FilterUid: String, CompletedMode: String): [Task!]!
-  GetBranchUsers(BranchID: String!): [User!]!
+#  GetBranchColumns(BranchUid: String!): [Column]!
+#  CompanyBranches(CompanyUid: String!): [Branch!]!
+#  GetBranchProjects(BranchUid: String!, From: String, Next: Float, Options: ProjectSearchOptions): ProjectConnection!
+#  GetBranchTasks(BranchUid: String!, FilterUid: String, CompletedMode: String): [Task!]!
+#  GetBranchUsers(BranchID: String!): [User!]!
 #  Does this need to be paginated? oh yeah probs for the un-positioned column
-  GetColumnTasks(BranchUid: String!, ColumnUid: String, From: String, Next: Float, Options: TaskSearchOptions!): TasksConnection
-  GetCompanyByUid(CompanyUid: String!): Company
-  GetProjectByID(ProjectUid: String!): Project!
-  GetProjectTasks(ProjectUid: String!): [Task]!
-  GetTaskByID(TaskUid: String!): Task!
-  GetUnPositionedTasks(BranchUid: String!, ColumnUid: String!): TasksConnection
-  Me: User!
-  GetKanbanFilters(BranchUid: String!): [KanbanFilter]
-  GetKanbanFilterByUid(FilterUid: String!): KanbanFilter
+#  GetColumnTasks(BranchUid: String!, ColumnUid: String, From: String, Next: Float, Options: TaskSearchOptions!): TasksConnection
+#  GetCompanyByUid(CompanyUid: String!): Company
+#  GetProjectByID(ProjectUid: String!): Project!
+#  GetProjectTasks(ProjectUid: String!): [Task]!
+#  GetTaskByID(TaskUid: String!): Task!
+#  GetUnPositionedTasks(BranchUid: String!, ColumnUid: String!): TasksConnection
+#  Me: User!
+#  GetKanbanFilters(BranchUid: String!): [KanbanFilter]
+#  GetKanbanFilterByUid(FilterUid: String!): KanbanFilter
   #  GetTimeTrackerByID(TimeTrackerUid: String!): TimeTracker
   #  GetTimeTrackingForBranch(BranchUid: String!, End: String!, Start: String!): TimeTrackerConnection
   #  GetTimeTrackingForOwner(OwnerType: String!, OwnerUid: String!): TimeTrackerConnection

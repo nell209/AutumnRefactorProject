@@ -1,9 +1,11 @@
 package service
 
 import (
+	"errors"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/nell209/AutumnRefactor/graph/model"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"time"
 )
 
@@ -38,7 +40,7 @@ func NewAuthService() AuthService {
 }
 
 // SignAuthJWT TODO decide an expire time
-func (s *AuthService) SignAuthJWT(userID string, role string) (string, error) {
+func SignAuthJWT(userID string, role string) (string, error) {
 	expirationTime := jwt.NumericDate{Time: time.Now().Add(time.Second * 40000)}
 	claims := AutumnClaims{
 		UserID: userID,
@@ -62,30 +64,79 @@ func (s *AuthService) SignAuthJWT(userID string, role string) (string, error) {
 //	return &tokenString, err
 //}
 
-func (s *AuthService) ValidateJWT(signedToken string) (AutumnClaims, error) {
+func ValidateJWT(signedToken string) (AutumnClaims, error) {
 	var parsedClaims AutumnClaims
 	token, err := jwt.ParseWithClaims(signedToken, &parsedClaims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(tokenSecret), nil
 	})
-	if !token.Valid {
+	if token == nil || !token.Valid {
 		return parsedClaims, jwt.ErrTokenUnverifiable
 	}
 	return parsedClaims, err
 }
 
-// take a value and return an updated copy
-func hashPassword(password string, user model.User) (model.User, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+// TODO remove this before Launch
+func (s *Service) AdminSetPassword(userID string, password string) error {
+	var user model.User
+	hashedPass, err := HashPassword(password)
 	if err != nil {
-		return model.User{}, err
+		return err
 	}
-	user.Password = string(hashedPassword)
-	return user, nil
-}
-
-func checkPassword(providedPassword string, user model.User) error {
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(providedPassword)); err != nil {
+	err = s.db.Model(&user).Where("id = ?", userID).Update("password", hashedPass).Error
+	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
+}
+
+// take a value and return an updated copy
+func HashPassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
+}
+
+func checkPassword(providedPassword string, dbPassword *string) error {
+	if dbPassword == nil {
+		return errors.New("no password set to compare against")
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(*dbPassword), []byte(providedPassword)); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Service) checkAndAuthenticateTempAccount(userID string, hashedPassword string) (model.TemporaryAccount, error) {
+	tempAccount := model.TemporaryAccount{UserID: userID}
+	err := s.db.Where(&tempAccount).Joins("User").First(&tempAccount).Error
+	if err != nil {
+		return tempAccount, err
+	}
+	err = checkPassword(hashedPassword, &tempAccount.TemporaryPassword)
+	if err != nil {
+		return tempAccount, err
+	}
+	return tempAccount, nil
+}
+
+func (s *Service) AuthenticateCredentials(email string, password string) (model.User, *string, error) {
+	var user model.User
+	if err := s.db.Where("LOWER(email) = LOWER(?)", email).First(&user).Error; err != nil {
+		return user, user.Role, err
+	}
+	if user.Password == nil {
+		tempAccount, err := s.checkAndAuthenticateTempAccount(user.ID, password)
+		if err != nil {
+			return user, user.Role, err
+		}
+		tempRole := model.TEMP
+		return tempAccount.User, &tempRole, nil
+	}
+	if err := checkPassword(password, user.Password); err != nil {
+		return user, user.Role, err
+	}
+	return user, user.Role, nil
 }

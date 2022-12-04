@@ -1,12 +1,12 @@
 type Branch {
-  ID: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
-  companyID: ID! @goTag(key: "gorm", value: "type:uuid")
+  id: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
   name: String!
+  companyId: ID! @goTag(key: "gorm", value: "type:uuid")
   updatedAt: Time!
   createdAt: Time!
   columns: [Column!]! @goField(forceResolver: true)
-  prairieMode: Boolean
-  kelownaMode: Boolean
+  users: [User!]! @goField(forceResolver: true)
+  projects: [Project!]! @goField(forceResolver: true)
 }
 
 input BranchInput {
