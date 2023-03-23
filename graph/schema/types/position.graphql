@@ -1,6 +1,0 @@
-type Position {
-  id: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
-  taskID: ID!
-  pos: Float
-  columnUid: String
-}

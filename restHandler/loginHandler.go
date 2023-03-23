@@ -2,7 +2,7 @@ package restHandler
 
 import (
 	"encoding/json"
-	"github.com/nell209/AutumnRefactor/service"
+	"github.com/nell209/AutumnRefactor/services"
 	"log"
 	"net/http"
 )
@@ -60,7 +60,7 @@ func (h *restHandler) Login() http.Handler {
 			t := ""
 			role = &t
 		}
-		accessToken, err := service.SignAuthJWT(user.ID, *role)
+		accessToken, err := services.SignAuthJWT(user.ID, *role)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, "Unauthorized Access", http.StatusInternalServerError)

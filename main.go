@@ -7,15 +7,15 @@ import (
 	"github.com/nell209/AutumnRefactor/database"
 	"github.com/nell209/AutumnRefactor/middleware"
 	"github.com/nell209/AutumnRefactor/restHandler"
-	"github.com/nell209/AutumnRefactor/service"
+	"github.com/nell209/AutumnRefactor/services"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/nell209/AutumnRefactor/graph"
-	"github.com/nell209/AutumnRefactor/graph/generated"
+	"github.com/nell209/AutumnRefactor/graphql"
+	"github.com/nell209/AutumnRefactor/graphql/generated"
 )
 
 const defaultPort = "8080"
@@ -61,15 +61,15 @@ func main() {
 
 	database.Migrate(db)
 
-	services := service.InitializeServices(db)
-	resolver := graph.BindServicesToResolver(services)
+	services := services.InitializeServices(db)
+	resolver := graphql.BindServicesToResolver(services)
 	restHandlers := restHandler.InitializeHandler(services)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: resolver}))
+	srv := middleware.CorsMiddleware(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: resolver})))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	http.Handle("/login", restHandlers.Login())

@@ -1,0 +1,13 @@
+type Company {
+  id: ID! @goTag(key: "gorm", value: "type:uuid;default:uuid_generate_v4()")
+  name: String!
+  branches: [Branch!]! @goField(forceResolver: true)
+  updatedAt: Time!
+  createdAt: Time!
+  paymentStatus: String!
+  paymentMethod: String
+}
+
+input CompanyInput {
+  name: String!
+}

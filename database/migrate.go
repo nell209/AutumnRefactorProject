@@ -2,21 +2,20 @@ package database
 
 import (
 	"fmt"
-	"github.com/nell209/AutumnRefactor/graph/model"
+	"github.com/nell209/AutumnRefactor/models"
 	"gorm.io/gorm"
 )
 
 func Migrate(db *gorm.DB) {
 	err := db.AutoMigrate(
-		&model.Company{},
-		&model.Branch{},
-		&model.User{},
-		&model.Project{},
-		&model.KanbanFilter{},
-		&model.Position{},
-		&model.Task{},
+		&models.Company{},
+		&models.Branch{},
+		&models.User{},
+		&models.Project{},
+		&models.KanbanFilter{},
+		&models.Task{},
 		//&model.TaskFilter{},
-		&model.TemporaryAccount{},
+		&models.TemporaryAccount{},
 	)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to automigrate but got error %v", err))

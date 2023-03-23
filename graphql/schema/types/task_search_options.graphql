@@ -1,0 +1,24 @@
+input TaskSearchOptions {
+  startedBefore: Time
+  startedAfter: Time
+  completedBefore: Time
+  completedAfter: Time
+  projectIds: [String!]
+  userIds: [String!]
+  columnIds: [String!]
+  includeUnassigned: Boolean
+  status: String
+  search: String
+}
+
+type SearchOptions {
+  startedBefore: String
+  startedAfter: String
+  completedBefore: String
+  completedAfter: String
+  projectIds: [String!]
+  userIds: [String!]
+  columnIds: [String!]
+  includeUnassigned: Boolean
+  status: String
+}

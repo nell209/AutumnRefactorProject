@@ -1,11 +1,11 @@
 package restHandler
 
-import "github.com/nell209/AutumnRefactor/service"
+import "github.com/nell209/AutumnRefactor/services"
 
 type restHandler struct {
-	service *service.Service
+	service *services.Service
 }
 
-func InitializeHandler(service *service.Service) restHandler {
+func InitializeHandler(service *services.Service) restHandler {
 	return restHandler{service: service}
 }
